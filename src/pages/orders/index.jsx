@@ -1,13 +1,3 @@
-// import React from 'react'
-
-// const Index = () => {
-//   return (
-//     <div>Orders</div>
-//   )
-// }
-
-// export default Index
-
 import * as React from 'react';
 import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';

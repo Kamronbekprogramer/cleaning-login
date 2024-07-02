@@ -20,22 +20,35 @@ const style = {
   outline: "none",
 };
 
-export default function EditService({ item, open, handleClose, onSave }) {
+export default function EditService({ item, open, handleClose }) {
   const initialValues = {
-    id: item.id || "",
-    name: item.name || "",
-    price: item.price || "",
+    // id: item.id || "",
+    name: item?.name ? item?.name : "",
+    price: item?.price ? item?.price : "",
   };
 
   const handleSubmit = async (data) => {
-    try {
-      const response = await service.update(data);
-      if (response.status === 200) {
-        onSave(data);
+    const payload = {id: item.id, ...data} 
+    if(item){
+      try {
+        const response = await service.update(payload);
+        if (response.status === 200) {
+          window.location.reload()
+        }
         handleClose();
+      } catch (err) {
+        console.error(err);
       }
-    } catch (err) {
-      console.error(err);
+    } else {
+      try {
+        const response = await service.create(data)
+        if (response.status === 201) {
+          window.location.reload();
+        }
+        handleClose();
+      } catch (error) {
+        console.log("Error", error)
+      }
     }
   };
 
