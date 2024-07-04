@@ -44,4 +44,11 @@ export const ServiceValidationSchema = Yup.object().shape({
     price: Yup.number().required("Majburiy").min(0, "Minimal narxi 0"),
   });
 
+  export const orderValidationSchema = Yup.object().shape({
+    client_full_name: Yup.string().required("Mijoz ismi kiritilmadi"),
+    client_phone_number: Yup.string().required('Phone number is required'),
+    service_id: Yup.string().required('Service id is required'),
+    amount: Yup.string().required('Amount is required'),
+});
+
   

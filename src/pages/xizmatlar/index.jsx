@@ -13,7 +13,7 @@ import Paper from "@mui/material/Paper";
 import service from "../../service/service";
 import { useEffect, useState } from "react";
 import { Button, IconButton, InputBase, Typography } from "@mui/material";
-import { GridSearchIcon } from "@mui/x-data-grid";
+import SearchIcon from "@mui/icons-material/Search";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -42,7 +42,11 @@ const Index = () => {
   const getService = async () => {
     try {
       const response = await service.get();
-      setServices(response.data.services);
+      if (response.data && response.data.services) {
+        setServices(response.data.services);
+      } else {
+        console.error("Unexpected response structure:", response);
+      }
     } catch (err) {
       console.log(err);
     }
@@ -72,6 +76,7 @@ const Index = () => {
     setServices((prev) =>
       prev.map((item) => (item.id === updatedItem.id ? updatedItem : item))
     );
+    setOpen(false);
   };
 
   return (
@@ -92,56 +97,71 @@ const Index = () => {
               <InputBase
                 sx={{ ml: 1, flex: 1 }}
                 placeholder="Qidiruv"
-                inputProps={{ "aria-label": "search google maps" }}
+                inputProps={{ "aria-label": "search services" }}
               />
               <IconButton type="button" sx={{ p: "10px" }} aria-label="search">
-                <GridSearchIcon />
+                <SearchIcon />
               </IconButton>
             </Paper>
           </div>
           <AddService />
         </div>
 
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 700 }} aria-label="customized table">
-            <TableHead>
-              <TableRow>
-                <StyledTableCell>T/R</StyledTableCell>
-                <StyledTableCell>Xizmat nomi</StyledTableCell>
-                <StyledTableCell align="center">Xizmat narxi</StyledTableCell>
-                <StyledTableCell align="center">Kutish vaqti</StyledTableCell>
-                <StyledTableCell align="center">Action</StyledTableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {services.map((row, index) => (
-                <StyledTableRow key={row.id}>
-                  <StyledTableCell>{index + 1}</StyledTableCell>
-                  <StyledTableCell component="th" scope="row">
-                    {row.name}
-                  </StyledTableCell>
-                  <StyledTableCell align="center">
-                    {row.price.toLocaleString("en-US", {
-                      style: "currency",
-                      currency: "USD",
-                    })}
-                  </StyledTableCell>
-                  <StyledTableCell align="center">
-                    <Typography>30 daqiqa</Typography>
-                  </StyledTableCell>
-                  <StyledTableCell align="center">
-                    <button className="mr-2" onClick={() => editItem(row)}>
-                      <EditIcon color="warning" />
-                    </button>
-                    <button className="ml-2" onClick={() => deleteItem(row.id)}>
-                      <DeleteIcon color="error" />
-                    </button>
-                  </StyledTableCell>
-                </StyledTableRow>
-              ))}
-            </TableBody>
+        {services.length === 0 ? (
+          <Table sx={{ minWidth: 700, }} aria-label="customized table">
+          <TableHead>
+            <TableRow>
+              <StyledTableCell>T/R</StyledTableCell>
+              <StyledTableCell>Xizmat nomi</StyledTableCell>
+              <StyledTableCell align="center">Xizmat narxi</StyledTableCell>
+              <StyledTableCell align="center">Kutish vaqti</StyledTableCell>
+              <StyledTableCell align="center">Action</StyledTableCell>
+            </TableRow>
+          </TableHead>
           </Table>
-        </TableContainer>
+          
+        ) : (
+          <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 700 }} aria-label="customized table">
+              <TableHead>
+                <TableRow>
+                  <StyledTableCell>T/R</StyledTableCell>
+                  <StyledTableCell>Xizmat nomi</StyledTableCell>
+                  <StyledTableCell align="center">Xizmat narxi</StyledTableCell>
+                  <StyledTableCell align="center">Kutish vaqti</StyledTableCell>
+                  <StyledTableCell align="center">Action</StyledTableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {services.map((row, index) => (
+                  <StyledTableRow key={row.id}>
+                    <StyledTableCell>{index + 1}</StyledTableCell>
+                    <StyledTableCell component="th" scope="row">
+                      {row.name}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      {row.price.toLocaleString("en-US", {
+                        style: "currency",
+                        currency: "USD",
+                      })}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      <Typography>30 daqiqa</Typography>
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      <IconButton onClick={() => editItem(row)} color="warning">
+                        <EditIcon />
+                      </IconButton>
+                      <IconButton onClick={() => deleteItem(row.id)} color="error">
+                        <DeleteIcon />
+                      </IconButton>
+                    </StyledTableCell>
+                  </StyledTableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
       </div>
     </>
   );
